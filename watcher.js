@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 const URL = "https://time.com/person-of-the-year-2025/";
 const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1133114527173574797/f7W00mapDDbHmby1hNL6a4uB3qjfU1IDplCIV3p5Dd-PRJVSFZfgNMQM-ZGMmoE28Ev5";
 
