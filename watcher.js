@@ -1,7 +1,13 @@
 import fetch from "node-fetch";
 
 const URL = "https://time.com/person-of-the-year-2025/";
-const DISCORD_WEBHOOK = "YOUR_DISCORD_WEBHOOK_URL"; // replace with your webhook
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
+
+if (!DISCORD_WEBHOOK) {
+  console.error("🚨 Discord webhook not set! Add it as an environment variable in Render.");
+  process.exit(1);
+}
+
 let lastHTML = null;
 
 async function notifyDiscord(message) {
@@ -20,16 +26,10 @@ async function notifyDiscord(message) {
 async function fetchPage() {
   try {
     const res = await fetch(URL, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-      }
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
     });
-    if (res.status !== 200) {
-      console.log(`STATUS: ${res.status}`);
-      return null;
-    }
     const html = await res.text();
-    return html;
+    return { status: res.status, html, length: html.length };
   } catch (err) {
     console.error("Fetch error:", err);
     return null;
@@ -37,25 +37,22 @@ async function fetchPage() {
 }
 
 async function checkPOTY() {
-  console.log(`Checking page at ${new Date().toISOString()} ...`);
-  const html = await fetchPage();
-  if (!html) return;
+  const timestamp = new Date().toISOString();
+  const result = await fetchPage();
+  if (!result) return;
 
-  if (!lastHTML) {
-    lastHTML = html;
-    console.log("First fetch completed. Monitoring for changes...");
-    return;
-  }
+  const { status, html, length } = result;
+  console.log(`[${timestamp}] STATUS: ${status}, HTML length: ${length}`);
 
-  if (html !== lastHTML) {
-    console.log("🔥 Page changed! Sending notification...");
-    await notifyDiscord("The Time POTY 2025 page has changed! Check it: " + URL);
-    lastHTML = html;
-  } else {
-    console.log("No changes detected.");
-  }
+  // Send Discord message on every check
+  await notifyDiscord(`Checked at ${timestamp} — STATUS: ${status}, HTML length: ${length}`);
+
+  // Update lastHTML if needed (optional)
+  lastHTML = html;
 }
 
-// Run every minute
+// First run
 checkPOTY();
+
+// Run every minute
 setInterval(checkPOTY, 60000);
