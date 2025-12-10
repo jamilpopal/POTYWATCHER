@@ -1,12 +1,7 @@
 import fetch from "node-fetch";
 
 const URL = "https://time.com/person-of-the-year-2025/";
-const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
-
-if (!DISCORD_WEBHOOK) {
-  console.error("🚨 Discord webhook not set! Add it as an environment variable in Render.");
-  process.exit(1);
-}
+const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1133114527173574797/f7W00mapDDbHmby1hNL6a4uB3qjfU1IDplCIV3p5Dd-PRJVSFZfgNMQM-ZGMmoE28Ev5";
 
 let lastHTML = null;
 
@@ -47,7 +42,7 @@ async function checkPOTY() {
   // Send Discord message on every check
   await notifyDiscord(`Checked at ${timestamp} — STATUS: ${status}, HTML length: ${length}`);
 
-  // Update lastHTML if needed (optional)
+  // Update lastHTML if needed
   lastHTML = html;
 }
 
