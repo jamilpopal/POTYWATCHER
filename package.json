@@ -7,7 +7,6 @@
     "start": "node watcher.js"
   },
   "dependencies": {
-    "node-fetch": "^latest"
+    "node-fetch": "^3.6.1"
   }
 }
-
