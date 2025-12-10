@@ -19,8 +19,14 @@ async function notifyDiscord(message) {
 async function fetchPage() {
   try {
     const res = await fetch(URL, {
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Connection": "keep-alive"
+      }
     });
+
     const html = await res.text();
     return { status: res.status, html, length: html.length };
   } catch (err) {
@@ -40,7 +46,6 @@ async function checkPOTY() {
   // Send Discord message on every check
   await notifyDiscord(`Checked at ${timestamp} — STATUS: ${status}, HTML length: ${length}`);
 
-  // Update lastHTML if needed
   lastHTML = html;
 }
 
